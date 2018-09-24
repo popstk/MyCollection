@@ -1,6 +1,10 @@
 package main
 
-import "strings"
+import (
+	"errors"
+	"strconv"
+	"strings"
+)
 
 var prefixs = []string{
 	"IPTD",
@@ -50,14 +54,27 @@ var prefixs = []string{
 }
 
 // FormatName format names
-func FormatName(name string) string {
+func FormatName(name string) (string, error) {
 	name = strings.ToUpper(name)
 	name = strings.Replace(name, "-", "", -1)
+
+	prefix := ""
 	for _, pre := range prefixs {
 		if strings.HasPrefix(name, pre) {
-			name = pre + "-" + name[len(pre):]
-			return name
+			prefix = pre
+			break
 		}
 	}
-	return ""
+
+	if prefix == "" {
+		return "", errors.New("no match prefix")
+	}
+
+	rest := name[len(prefix):]
+	n, err := strconv.Atoi(rest)
+	if err != nil {
+		return "", errors.New("not number:" + rest)
+	}
+
+	return prefix + "-" + strconv.Itoa(n) , nil
 }

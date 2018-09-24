@@ -1,16 +1,29 @@
 package main
 
 import (
+	"bufio"
+	"encoding/json"
 	"fmt"
+	"io"
 	"log"
 	"os"
+	"strings"
 
 	"github.com/tidwall/buntdb"
 	"github.com/urfave/cli"
 )
 
+type Item struct {
+	ID   string `json:"id"`
+	Star int    `json:"star"`
+}
+
+func getSession() (*buntdb.DB, error) {
+	return buntdb.Open("jav.db")
+}
+
 func testbuntdb() {
-	db, err := buntdb.Open("jav.db")
+	db, err := getSession()
 	if err != nil {
 		fmt.Println("Error open: ", err)
 		return
@@ -46,6 +59,50 @@ func main() {
 			},
 			Action: func(c *cli.Context) error {
 				fmt.Println("import file: ", c.Args().First())
+				db, err := getSession()
+				if err != nil {
+					fmt.Println("Error open: ", err)
+					return nil
+				}
+				defer db.Close()
+				f, err := os.Open(c.Args().First())
+				if err != nil {
+					fmt.Println("Error open: ", err)
+					return err
+				}
+				fmt.Println("start")
+				star := c.Int("star")
+				buf := bufio.NewReader(f)
+				for {
+					bytes, _, err := buf.ReadLine()
+					if err == io.EOF {
+						break
+					}
+					line := string(bytes[:])
+					fmt.Println("Content is: ", line)
+					line = strings.TrimSpace(line)
+					name, err := FormatName(line)
+					if err != nil {
+						fmt.Println(name, ": ", err)
+						continue
+					}
+					fmt.Println(name)
+					err = db.Update(func(tx *buntdb.Tx) error {
+						data := Item{
+							ID:   name,
+							Star: star,
+						}
+						bytes, err := json.Marshal(data)
+						if err != nil {
+							fmt.Println("Can not Marshal: ", data)
+							return err
+						}
+						pvalue, replaced, err := tx.Set(name, string(bytes[:]), nil)
+						fmt.Println(pvalue, replaced, err)
+						return nil
+					})
+				}
+
 				fmt.Println("database file path is ", c.String("database"))
 				return nil
 			},
@@ -54,7 +111,29 @@ func main() {
 			Name:  "search",
 			Usage: "search key value",
 			Action: func(c *cli.Context) error {
-				fmt.Println("search file: ", c.Args().First())
+				db, err := getSession()
+				if err != nil {
+					fmt.Println("Error open: ", err)
+					return nil
+				}
+				defer db.Close()
+				for i := 0; i < c.NArg(); i++ {
+					key := c.Args().Get(i)
+					name, err := FormatName(key)
+					if err != nil {
+						fmt.Println(name, ": ", err)
+						continue
+					}
+					db.View(func(tx *buntdb.Tx) error {
+						v, err := tx.Get(name)
+						if err == nil {
+							fmt.Println(name, ": ", v)
+						} else {
+							fmt.Println(name, ": ", err)
+						}
+						return nil
+					})
+				}
 				return nil
 			},
 		},
@@ -62,10 +141,20 @@ func main() {
 			Name:  "format",
 			Usage: "format names",
 			Action: func(c *cli.Context) error {
+				db, err := getSession()
+				if err != nil {
+					fmt.Println("Error open: ", err)
+					return nil
+				}
+				defer db.Close()
 				for i := 0; i < c.NArg(); i++ {
 					raw := c.Args().Get(i)
-					fmt.Println("Before is ", raw)
-					fmt.Println("After is ", FormatName(raw))
+					name, err := FormatName(raw)
+					if err != nil {
+						fmt.Println(name, ": ", err)
+						continue
+					}
+					fmt.Println(name)
 				}
 				return nil
 			},
@@ -80,7 +169,6 @@ func main() {
 	}
 
 	app.Action = func(c *cli.Context) error {
-		fmt.Println("fuck")
 		fmt.Println("database file path is ", c.String("database"))
 		return nil
 	}
