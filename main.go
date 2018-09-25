@@ -19,7 +19,14 @@ type Item struct {
 }
 
 func getSession() (*buntdb.DB, error) {
-	return buntdb.Open("jav.db")
+	db, err := buntdb.Open("jav.db")
+	if err != nil {
+		return nil, err
+	}
+
+	db.CreateIndex("star", "*", buntdb.IndexJSON("star"))
+	db.CreateIndex("actress", "*", buntdb.IndexJSON("actress"))
+	return db, nil
 }
 
 func testbuntdb() {

@@ -56,7 +56,10 @@ var prefixs = []string{
 // FormatName format names
 func FormatName(name string) (string, error) {
 	name = strings.ToUpper(name)
-	name = strings.Replace(name, "-", "", -1)
+
+	for _, sep := range []byte{'-', '_'} {
+		name = strings.Replace(name, string(sep), "", -1)
+	}
 
 	prefix := ""
 	for _, pre := range prefixs {
@@ -76,5 +79,5 @@ func FormatName(name string) (string, error) {
 		return "", errors.New("not number:" + rest)
 	}
 
-	return prefix + "-" + strconv.Itoa(n) , nil
+	return prefix + "-" + strconv.Itoa(n), nil
 }
