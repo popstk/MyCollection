@@ -1,73 +1,51 @@
 package main
 
 import (
+	"encoding/json"
 	"errors"
+	"os"
 	"strconv"
 	"strings"
 )
 
-var prefixs = []string{
-	"IPTD",
-	"SIRO",
-	"IPX",
-	"SNIS",
-	"BAGBD",
-	"200GANA",
-	"ABP",
-	"SNIS",
-	"IPZ",
-	"KAWD",
-	"300MIUM",
-	"259LUXU",
-	"FSET",
-	"PT",
-	"MIRD",
-	"MIDE",
-	"RBD",
-	"WWW",
-	"LOVE",
-	"REAL",
-	"WANZ",
-	"MIAD",
-	"TokyoHot",
-	"RKI",
-	"HUNT",
-	"URMC",
-	"SDMU",
-	"LALS",
-	"APKH",
-	"OKSN",
-	"ZEX",
-	"CLUB",
-	"MIDE",
-	"OFJE",
-	"ONEZ",
-	"PGD",
-	"HIZ",
-	"261ARA",
-	"MUGON",
-	"STAR",
-	"YRH",
-	"CWP",
-	"AKB",
-	"HND",
-	"332NAMA",
-	"SSNI",
-	"ENFD",
-	"XAM",
-	"IDBD",
-	"AVZG",
-	"CHN",
-	"INCT",
-	"KWBD",
-	"PornoEigakan",
+var prefixs []string
+
+func init() {
+	f, err := os.Open("format.json")
+	if err != nil {
+		panic(err)
+	}
+
+	var v interface{}
+	err = json.NewDecoder(f).Decode(&v)
+	if err != nil {
+		panic(err)
+	}
+
+	root, ok := v.(map[string]interface{})
+	if !ok {
+		panic("Invalid Format: root")
+	}
+
+	prefix, ok := root["prefix"].([]interface{})
+	if !ok {
+		panic("Invalid Format: prefix")
+	}
+
+	for _, p := range prefix {
+		pre, ok := p.(string)
+		if !ok {
+			panic("Invalid Format: prefix value")
+		}
+		prefixs = append(prefixs, pre)
+	}
 }
 
 // FormatName format names
 func FormatName(name string) (string, error) {
 	name = strings.ToUpper(name)
 
-	for _, sep := range []byte{'-', '_'} {
+	for _, sep := range []byte{'-', '_', ' '} {
 		name = strings.Replace(name, string(sep), "", -1)
 	}
 

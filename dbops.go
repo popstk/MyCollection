@@ -109,7 +109,7 @@ func Search(words []string) error {
 				return err
 			}
 
-			v, err = PrettyJson([]byte(v))
+			v, err = PrettyJSON([]byte(v))
 			if err != nil {
 				fmt.Println(name, ": ", err)
 			}
@@ -132,7 +132,7 @@ func ShowAll(star int) error {
 	db.View(func(tx *buntdb.Tx) error {
 		pivot := fmt.Sprintf(`{"star": %d}`, star)
 		tx.AscendEqual("star", pivot, func(key, value string) bool {
-			v, err := PrettyJson([]byte(value))
+			v, err := PrettyJSON([]byte(value))
 			if err != nil {
 				fmt.Println(key, ": ", err)
 			}
