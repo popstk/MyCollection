@@ -51,6 +51,16 @@ var prefixs = []string{
 	"CWP",
 	"AKB",
 	"HND",
+	"332NAMA",
+	"SSNI",
+	"ENFD",
+	"XAM",
+	"IDBD",
+	"AVZG",
+	"CHN",
+	"INCT",
+	"KWBD",
+	"PornoEigakan",
 }
 
 // FormatName format names
@@ -63,7 +73,7 @@ func FormatName(name string) (string, error) {
 
 	prefix := ""
 	for _, pre := range prefixs {
-		if strings.HasPrefix(name, pre) {
+		if strings.HasPrefix(name, strings.ToUpper(pre)) {
 			prefix = pre
 			break
 		}
