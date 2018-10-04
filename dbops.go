@@ -42,6 +42,10 @@ func updateToDB(db *buntdb.DB, raw string, star int) error {
 			fmt.Println("Can not insert: ", name)
 			return err
 		}
+		str, err := PrettyJSON(bytes)
+		if err == nil {
+			fmt.Println(str)
+		}
 		return nil
 	})
 	return nil

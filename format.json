@@ -1,4 +1,13 @@
 {
+    "delims": "[].-_ ",
+    "ignores": [
+        "Thz",
+        "la",
+        "HD",
+        "h264",
+        "hjd2048",
+        "com"
+    ],
     "prefix": [
         "IPTD",
         "SIRO",
@@ -56,6 +65,8 @@
         "PornoEigakan",
         "300MAAN",
         "HEYZO",
-        "PRED"
+        "PRED",
+        "FC2PPV",
+        "300NTK"
     ]
 }

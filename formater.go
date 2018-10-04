@@ -1,56 +1,29 @@
 package main
 
 import (
-	"encoding/json"
 	"errors"
-	"os"
 	"strconv"
 	"strings"
+
+	"github.com/thoas/go-funk"
 )
 
-var prefixs []string
-
-func init() {
-	f, err := os.Open("format.json")
-	if err != nil {
-		panic(err)
-	}
-
-	var v interface{}
-	err = json.NewDecoder(f).Decode(&v)
-	if err != nil {
-		panic(err)
-	}
-
-	root, ok := v.(map[string]interface{})
-	if !ok {
-		panic("Invalid Format: root")
-	}
-
-	prefix, ok := root["prefix"].([]interface{})
-	if !ok {
-		panic("Invalid Format: prefix")
-	}
-
-	for _, p := range prefix {
-		pre, ok := p.(string)
-		if !ok {
-			panic("Invalid Format: prefix value")
-		}
-		prefixs = append(prefixs, pre)
-	}
+// SplitMultiChar split by chars
+func SplitMultiChar(s string, delims string) []string {
+	return strings.FieldsFunc(s, func(r rune) bool {
+		return strings.Contains(delims, string(r))
+	})
 }
 
 // FormatName format names
 func FormatName(name string) (string, error) {
-	name = strings.ToUpper(name)
-
-	for _, sep := range []byte{'-', '_', ' '} {
-		name = strings.Replace(name, string(sep), "", -1)
-	}
+	parts := funk.FilterString(SplitMultiChar(name, conf.Delims), func(s string) bool {
+		return !funk.Contains(conf.Ignores, s)
+	})
+	name = strings.ToUpper(strings.Join(parts, ""))
 
 	prefix := ""
-	for _, pre := range prefixs {
+	for _, pre := range conf.Prefix {
 		if strings.HasPrefix(name, strings.ToUpper(pre)) {
 			prefix = pre
 			break

@@ -64,7 +64,7 @@ func main() {
 				for _, raw := range c.Args() {
 					name, err := FormatName(raw)
 					if err != nil {
-						fmt.Println(name, ": ", err)
+						fmt.Println(raw, ": ", err)
 						continue
 					}
 					fmt.Println(name)
