@@ -11,7 +11,7 @@ import (
 // SplitMultiChar split by chars
 func SplitMultiChar(s string, delims string) []string {
 	return strings.FieldsFunc(s, func(r rune) bool {
-		return strings.Contains(delims, string(r))
+		return strings.Contains(delims, strings.ToLower(string(r)))
 	})
 }
 

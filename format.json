@@ -1,9 +1,9 @@
 {
     "delims": "[].-_ ",
     "ignores": [
-        "Thz",
+        "thz",
         "la",
-        "HD",
+        "hd",
         "h264",
         "hjd2048",
         "com"
