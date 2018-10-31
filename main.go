@@ -38,8 +38,8 @@ func main() {
 			},
 		},
 		cli.Command{
-			Name:  "search",
-			Usage: "search key value",
+			Name:  "find",
+			Usage: "find key value",
 			Flags: []cli.Flag{
 				cli.BoolFlag{
 					Name: "all,a",

@@ -18,7 +18,7 @@ func SplitMultiChar(s string, delims string) []string {
 // FormatName format names
 func FormatName(name string) (string, error) {
 	parts := funk.FilterString(SplitMultiChar(name, conf.Delims), func(s string) bool {
-		return !funk.Contains(conf.Ignores, s)
+		return !funk.Contains(conf.Ignores, strings.ToLower(s))
 	})
 	name = strings.ToUpper(strings.Join(parts, ""))
 
