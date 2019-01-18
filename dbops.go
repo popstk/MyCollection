@@ -17,6 +17,29 @@ type Item struct {
 	Star int    `json:"star"`
 }
 
+func delFromDB(db *buntdb.DB, raw string) error {
+	raw = strings.TrimSpace(raw)
+	if raw == "" {
+		return nil
+	}
+	name, err := FormatName(raw)
+	if err != nil {
+		fmt.Println(raw, ": ", err)
+		return nil
+	}
+
+	err = db.Update(func(tx *buntdb.Tx) error {
+		_, err := tx.Delete(name)
+		if err != nil {
+			return err
+		}
+
+		return nil
+	})
+
+	return err
+}
+
 func updateToDB(db *buntdb.DB, raw string, star int) error {
 	raw = strings.TrimSpace(raw)
 	if raw == "" {
@@ -88,6 +111,20 @@ func AddName(names []string, star int) error {
 	defer db.Close()
 	for _, name := range names {
 		updateToDB(db, name, star)
+	}
+	return nil
+}
+
+// DelName -
+func DelName(names []string) error {
+	db, err := getSession()
+	if err != nil {
+		fmt.Println("Error open db : ", err)
+		return err
+	}
+	defer db.Close()
+	for _, name := range names {
+		delFromDB(db, name)
 	}
 	return nil
 }

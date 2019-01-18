@@ -6,7 +6,9 @@
         "hd",
         "h264",
         "hjd2048",
-        "com"
+        "com",
+        "thzu",
+        "cc"
     ],
     "prefix": [
         "IPTD",
@@ -16,6 +18,7 @@
         "BAGBD",
         "200GANA",
         "ABP",
+        "ABS",
         "SNIS",
         "IPZ",
         "KAWD",
@@ -83,6 +86,12 @@
         "TKI",
         "TYOD",
         "T28",
-        "BCV"
+        "BCV",
+        "PPT",
+        "NNPJ",
+        "277DCV",
+        "298HONB",
+        "326PAPA",
+        "GACHI"
     ]
 }

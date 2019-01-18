@@ -38,6 +38,13 @@ func main() {
 			},
 		},
 		cli.Command{
+			Name: "del",
+			Usage: "del key",
+			Action: func(c *cli.Context) error {
+				return DelName(c.Args())
+			},
+		},
+		cli.Command{
 			Name:  "find",
 			Usage: "find key value",
 			Flags: []cli.Flag{
