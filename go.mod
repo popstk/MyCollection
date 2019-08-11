@@ -1,7 +1,10 @@
 module github.com/popstk/MyCollection
 
 require (
-	github.com/thoas/go-funk v0.0.0-20181020164546-fbae87fb5b5c
+	github.com/gobwas/glob v0.2.3
+	github.com/pkg/errors v0.8.1
+	github.com/stretchr/testify v1.3.0 // indirect
+	github.com/thoas/go-funk v0.4.0
 	github.com/tidwall/btree v0.0.0-20170113224114-9876f1454cf0 // indirect
 	github.com/tidwall/buntdb v1.0.0
 	github.com/tidwall/gjson v1.1.5 // indirect
